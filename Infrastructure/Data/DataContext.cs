@@ -1,3 +1,4 @@
+using Domain.Entities;
 using Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,8 @@ public class DataContext :
     IdentityDbContext<UserEntity, RoleEntity, Guid>,
     IDataContext
 {
+    public DbSet<CardEntity>? Cards { get; set; }
+    
     public DataContext(DbContextOptions<DataContext> options)
         : base(options)
     {
