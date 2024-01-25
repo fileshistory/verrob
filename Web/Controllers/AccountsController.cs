@@ -3,8 +3,10 @@ using Domain.Entities.Identity;
 using Infrastructure.Data;
 using Infrastructure.Helpers.Auth;
 using Infrastructure.Identity.UserManager;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Shared.Models.Requests;
 using Shared.Models.Responses;
 using Web.Controllers.Base;
@@ -77,6 +79,33 @@ public class AccountsController : ApiController
         return new AuthResponseModel
         {
             Token = _jwtHelpers.SerializeToken(user.Id.ToString(), "")
+        };
+    }
+    
+    [HttpGet("{cardId:guid}/balance")]
+    [Authorize]
+    public async Task<ActionResult<GetCardBalanceResponseModel>> GetCardBalance([FromRoute] Guid cardId)
+    {
+        var authorizedUsedId = GetAuthorizedUsedId();
+        
+        var card = await _dbContext
+            .Set<CardEntity>()
+            .FirstOrDefaultAsync(card => card.Id == cardId && card.OwnerId == authorizedUsedId);
+    
+        if (card == null)
+        {
+            return BadRequest();
+        }
+    
+        var limit = 1500;
+        var available = limit - card.Balance;
+        
+        return new GetCardBalanceResponseModel
+        {
+            Balance = card.Balance,
+            BalanceFormatted = $"${card.Balance}",
+            Available = available,
+            AvailableFormated = $"${available}"
         };
     }
 }
