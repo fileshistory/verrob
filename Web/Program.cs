@@ -1,8 +1,12 @@
+using System.Text;
 using Domain.Entities.Identity;
 using Infrastructure.Data;
+using Infrastructure.Helpers.Auth;
 using Infrastructure.Identity.RoleManager;
 using Infrastructure.Identity.UserManager;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +26,34 @@ builder.Services
 builder.Services.AddScoped<IBaseRoleManager, BaseRoleManager>();
 builder.Services.AddScoped<IBaseUserManager, BaseUserManager>();
 
+string? secretString = builder.Configuration["Authentication:Jwt:Secret"];
+byte[] secret = Encoding.ASCII.GetBytes(secretString);
+var signingKey = new SymmetricSecurityKey(secret);
+
+builder.Services.AddTransient(_ => signingKey);
+
+builder.Services.AddTransient<JwtHelpers>();
+
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            IssuerSigningKey = signingKey,
+            ValidateIssuerSigningKey = true,
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -38,6 +70,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

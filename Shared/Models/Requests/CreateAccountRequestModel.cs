@@ -1,4 +1,4 @@
-namespace Shared.Models.Requests.Accounts;
+namespace Shared.Models.Requests;
 
 public class CreateAccountRequestModel
 {
