@@ -12,5 +12,8 @@ public class CardEntity : IEntity
     public Guid OwnerId { get; set; }
     public UserEntity? Owner { get; set; }
     
+    public int Points { get; set; }
+    public DateTime PointsUpdatedAt { get; set; }
+    
     public IEnumerable<TransactionEntity>? Transactions { get; set; }
 }

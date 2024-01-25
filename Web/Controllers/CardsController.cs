@@ -46,4 +46,42 @@ public class CardsController : ApiController
             Items = latestTransactions
         };
     }
+    
+    [HttpGet("{cardId:guid}/points")]
+    public async Task<ActionResult<GetPointsResponseModel>> GetPoints([FromRoute] Guid cardId)
+    {
+        Guid userId = GetAuthorizedUsedId();
+        
+        var card = await _dbContext
+            .Set<CardEntity>()
+            .Include(card => card.Transactions)
+            .FirstOrDefaultAsync(card => card.OwnerId == userId && card.Id == cardId);
+        
+        if (card == null)
+        {
+            return BadRequest();
+        }
+
+        int points;
+
+        if (card.PointsUpdatedAt.Day == DateTime.Today.Day)
+        {
+            points = card.Points;
+        }
+        else
+        {
+            points = PointsHelpers.Calculate(DateTime.Today);
+
+            card.Points = points;
+            card.PointsUpdatedAt = DateTime.Today;
+
+            _dbContext.Set<CardEntity>().Update(card);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        return new GetPointsResponseModel
+        {
+            Points = points,
+        };
+    }
 }
