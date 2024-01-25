@@ -1,6 +1,6 @@
 namespace Shared.Models.Entities;
 
-public class TransactionDetails
+public record TransactionDetails
 {
     public Guid Id { get; set; }
     

@@ -1,6 +1,6 @@
 namespace Shared.Models.Responses;
 
-public class AuthResponseModel
+public record AuthResponseModel
 {
     public string? Token { get; init; }
 }

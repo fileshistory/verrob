@@ -1,4 +1,4 @@
-namespace Web;
+namespace Infrastructure.Helpers;
 
 public static class PointsHelpers
 {

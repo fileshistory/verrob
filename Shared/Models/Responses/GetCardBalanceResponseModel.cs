@@ -1,6 +1,6 @@
 namespace Shared.Models.Responses;
 
-public class GetCardBalanceResponseModel
+public record GetCardBalanceResponseModel
 {
     public double Balance { get; init; }
     public string? BalanceFormatted { get; init; }

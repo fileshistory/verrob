@@ -1,6 +1,6 @@
 namespace Shared.Models.Requests;
 
-public class AuthRequestModel
+public record AuthRequestModel
 {
     public string? Email { get; init; }
     public string? Password { get; init; }

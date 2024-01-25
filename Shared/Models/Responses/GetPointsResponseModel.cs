@@ -1,6 +1,6 @@
 namespace Shared.Models.Responses;
 
-public class GetPointsResponseModel
+public record GetPointsResponseModel
 {
     public int Points { get; set; }
 }
