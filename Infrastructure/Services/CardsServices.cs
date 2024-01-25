@@ -5,6 +5,7 @@ using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Shared;
 using Shared.Models.Entities;
+using Shared.Models.Exceptions;
 
 namespace Infrastructure.Services;
 
@@ -28,7 +29,7 @@ public class CardsServices
         
         if (card == null)
         {
-            throw new Exception("Unauthorized");
+            throw new UnauthorizedException();
         }
 
         var transactions = card.Transactions?
@@ -47,7 +48,7 @@ public class CardsServices
     
         if (card == null)
         {
-            throw new Exception("Unauthorized");
+            throw new UnauthorizedException();
         }
 
         return card.Balance;
@@ -62,7 +63,7 @@ public class CardsServices
         
         if (card == null)
         {
-            throw new Exception("Unauthorized");
+            throw new UnauthorizedException();
         }
 
         int points;

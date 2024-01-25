@@ -6,6 +6,7 @@ using Infrastructure.Identity.UserManager;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Web.Extensions;
+using Web.Middlewares.ErrorsHandler;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +45,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ErrorsHandlerMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
